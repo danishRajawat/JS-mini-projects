@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="styles.css">
+   <style>
+    /* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.todo-app {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style: none;
+    margin-top: 20px;
+    padding: 0;
+}
+
+li {
+    background-color: #f9f9f9;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.task-buttons {
+    display: flex;
+}
+
+.task-buttons button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.task-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.task-actions button {
+    background-color: #28a745;
+}
+
+.task-actions button:hover {
+    background-color: #218838;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+    .todo-app {
+        max-width: 600px;
+        padding: 30px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    input[type="text"] {
+        width: 75%;
+        font-size: 18px;
+    }
+
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    li {
+        padding: 15px 20px;
+    }
+
+    .task-buttons button {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .todo-app {
+        max-width: 800px;
+        padding: 40px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    input[type="text"] {
+        width: 80%;
+        font-size: 20px;
+    }
+
+    button {
+        padding: 14px 25px;
+        font-size: 18px;
+    }
+
+    li {
+        padding: 20px 25px;
+    }
+
+    .task-buttons button {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .todo-app {
+        padding: 15px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    li {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .task-buttons {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+}
+
+   </style>
+</head>
+<body>
+    <div class="todo-app">
+        <header>
+            <h1>My To-Do List</h1>
+            <div class="input-group">
+                <input type="text" id="new-task" placeholder="Add a new task...">
+                <button id="add-task-btn">Add Task</button>
+            </div>
+        </header>
+        <ul id="task-list">
+            <!-- Tasks will be dynamically added here -->
+          
+        </ul>
+        <div class="task-actions">
+            <button id="delete-completed-btn">Delete Completed Tasks</button>
+        </div>
+    </div>
+    <script>
+        const taskInput = document.querySelector("#new-task");
+        const addTaskBtn = document.querySelector("#add-task-btn");
+        const TaskList = document.querySelector("#task-list");
+        const deleteCompletedBtn = document.querySelector("#delete-completed-btn")
+
+
+
+const completedTask = (e) => {
+  const span = e.target.nextElementSibling
+  span.classList.toggle("completed")
+}
+
+
+const AddTaskDynamically = (task) => {
+  const li = document.createElement("li");
+  li.setAttribute("class" , "todo-item")
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox"
+checkbox.addEventListener("click" , (e) => { completedTask(e)})
+
+  const span = document.createElement("span")
+  span.innerText = task
+
+  const actions = document.createElement("div")
+  actions.setAttribute("class" , "actions task-buttons")
+
+  const dltBtn = document.createElement("button")
+  dltBtn.setAttribute("class" , "delete-btn ")
+  dltBtn.innerText = "Delete"
+  dltBtn.addEventListener("click" , (e) => { DeleteTask(e) })
+  
+  const editBtn = document.createElement("button")
+  editBtn.setAttribute("class" , "edit-btn")
+  editBtn.innerText = "Edit"
+
+  actions.appendChild(editBtn);
+  actions.appendChild(dltBtn);
+
+  li.appendChild(checkbox)
+  li.appendChild(span)
+  li.appendChild(actions)
+
+  TaskList.appendChild(li)
+  
+}
+
+const getToDOFromLs = () => {
+ let item =  localStorage.getItem("ToDo")
+if (!item) {
+    return []
+}else{
+    return JSON.parse(item)
+}
+
+}
+
+
+let ToDoTask = getToDOFromLs();
+
+
+ToDoTask.forEach(element => {
+    AddTaskDynamically(element)
+});
+
+
+const addTask = () => {
+  const task = taskInput.value.trim()
+
+if (!task) {
+    alert("Please Enter a Task")
+}else{
+    AddTaskDynamically(task)
+    ToDoTask.push(task)
+ToDoTask = new Set(ToDoTask)
+ToDoTask = [...ToDoTask]
+setItemInLs(ToDoTask)
+}
+
+taskInput.value = ""
+
+}
+addTaskBtn.addEventListener("click" , addTask)
+
+
+const setItemInLs = (ToDoTask) => {
+  localStorage.setItem("ToDo" , JSON.stringify(ToDoTask))
+}
+
+const DeleteTask = (e) => {
+ let removeItem = e.target.parentElement.previousElementSibling.innerText
+
+ ToDoTask = ToDoTask.filter((ToDo) => ToDo !== removeItem)
+
+ e.target.parentElement.parentElement.remove()
+  
+ setItemInLs(ToDoTask)
+  
+}
+deleteCompletedBtn.addEventListener("click" , (e) => { 
+   let completedTask =  document.querySelector("span").classList.contains("completed")
+
+   
+   
+ })
+
+
+
+
+    </script>
+</body>
+</html>
